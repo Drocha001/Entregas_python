@@ -13,6 +13,6 @@ lista = sys.argv[1:]
 
 for x in lista:
     if int(x) % 2 == 0:
-        print(valor1, "es par")
+        print(valor1, "es par:")
     else:
         print(valor1, "es impar")
