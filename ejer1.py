@@ -9,6 +9,7 @@ valor1 = sys.argv[1]
 valor2 = sys.argv[2]
 valor3 = sys.argv[3]
 
+
 lista = sys.argv[1:]
 
 for x in lista:
