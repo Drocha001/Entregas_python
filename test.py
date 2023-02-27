@@ -72,7 +72,7 @@ table_title = tk.Label(ventana, text="Book List", font=("Arial", 20)).place(
 )
 
 #####################################
-# TABLA
+# TABLA 
 #####################################
 
 tabla = ttk.Treeview(ventana, columns=("Id", "Title", "Author", "id_cliente"))
