@@ -11,6 +11,12 @@ from tkinter.filedialog import askopenfilename
 
 # #########
 # enconding: utf-8
+def vaciar():
+    entrada1.delete(0, END)
+    entrada2.delete(0, END)
+    entrada3.delete(0, END)
+    entrada4.delete(0, END)
+    entrada5.delete(0, END)
 
 
 def conectar():
@@ -49,6 +55,7 @@ def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
     cursor.execute(sql, data)
     con.commit()
     showinfo("Perfecto!!", "Sus datos han sido guardados con exito!")
+    vaciar()
     actualizar_treeview(tree)
 
 
@@ -71,16 +78,60 @@ def actualizar_treeview(mitreview):
         )
 
 
-def consultar(titulo, tree):
-    sql = "SELECT * FROM libros WHERE titulo =?  "
-    dato = (titulo,)
+def consultar(titulo, autor, retiro, cliente, dev, tree):
+    selection = combo.get()
+    tabla = ""
+    sql = ""
+    # sql = "SELECT * FROM libros WHERE "+tabla+"=?"
+    ######################################################################################
+    if selection.lower() == "titulo":
+        tabla = "titulo"
+        # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+
+    else:
+        if selection.lower() == "autor":
+            sql = ""
+            tabla = "autor"
+            # sql = "SELECT * FROM libros WHERE "+tabla+"=?"
+            # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+
+            if selection.lower() == "retiro":
+                sql = ""
+                tabla = "fecharetiro"
+
+            else:
+                if selection.lower() == "çliente":
+                    sql = ""
+                    tabla = "cliente"
+
+                else:
+                    if selection.lower() == "devolucion":
+                        tabla = "fechadev"
+
+                    else:
+                        showerror(
+                            "Error",
+                            "Debe elegir un elmento de la lista antes de modificar",
+                        )
+                        vaciar()
+                        return
+    ######################################################################################
+    sql = "SELECT * FROM libros WHERE " + tabla + "=?"
+    # sql = "SELECT * FROM libros WHERE titulo =?  "
+    dato = (tabla,)
     con = conectar()
     cursor = con.cursor()
     cursor.execute(sql, dato)
     con.commit()
     resultado = cursor.fetchall()
-    print(resultado)
-    actualizar_treeview(tree)
+    # print(resultado)
+    # actualizar_treeview(tree)
+    vaciar()
+    entrada1.insert(0, titulo)
+    entrada2.insert(0, autor)
+    entrada3.insert(0, retiro)
+    entrada4.insert(0, cliente)
+    entrada5.insert(0, dev)
 
 
 def borrar(br, tree):
@@ -88,45 +139,136 @@ def borrar(br, tree):
     if askyesno("Eliminar datos", "Desea eliminar esta entrada??"):
         showinfo("Borrar: ", "Eliminando...")
         ######### BORRADO ####################
-        borrar = tree.item(br).get(
-            "text"
-        )  # obtengo el id para buscar en l abase de datos
+        # obtengo el id para buscar en la base de datos
+        borrar = tree.item(br).get("text")
         con = conectar()
         cursor = con.cursor()
         sql = "DELETE FROM libros WHERE id = (?) "
         dato = (borrar,)  # tupla de datos
         cursor.execute(sql, dato)
         con.commit()
+        vaciar()
 
     else:
         showinfo("No", "Continuamos... :)")
     actualizar_treeview(tree)
 
 
-def modificar(br, titulo, autor, fecha_retiro, cliente, fecha_dev, tree, campo):
+def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
     con = conectar()
     cursor = con.cursor()
-    accion = "titulo"
+    id_modif = tree.item(br).get("text")  # obtiene el Id para modificar
     selection = combo.get()
+    tabla = ""
+    sql = ""
+    # 1) VOY A AVERIGUAR QUE OPCION ELIGIO EL USUARIO
 
-    modif = tree.item(br).get("text")  # obtiene el Id para modificar
-    con = conectar()
-    cursor = con.cursor()
-    modif = tree.item(br).get("text")  # obtiene el Id para modificar
-    sql = "UPDATE libros SET titulo=?, autor=?, fecharetiro=?, cliente=?,fechadev=?  WHERE id=? "
-    dato = (
-        titulo,
-        autor,
-        fecha_retiro,
-        cliente,
-        fecha_dev,
-        modif,
-    )  # tupla de datos
+    if selection.lower() == "titulo":
+        tabla = "titulo"
+        # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+        sql = ""
+        sql = (
+            "UPDATE libros SET "
+            + tabla
+            + "=?"
+            + ",autor=?, fecharetiro=?, cliente=?,fechadev=?  WHERE id=? "
+        )
+        dato = (
+            titulo,
+            autor,
+            fecharetiro,
+            cliente,
+            fechadev,
+            id_modif,
+        )  # tupla de datos
+    else:
+        if selection.lower() == "autor":
+            sql = ""
+            tabla = "autor"
+            # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+            sql = (
+                "UPDATE libros SET "
+                + tabla
+                + "=?"
+                + ",titulo=?, fecharetiro=?, cliente=?,fechadev=?  WHERE id=? "
+            )
+            dato = (
+                autor,
+                titulo,
+                fecharetiro,
+                cliente,
+                fechadev,
+                id_modif,
+            )  # tupla de datos
+        else:
+            if selection.lower() == "retiro":
+                sql = ""
+                tabla = "fecharetiro"
+                sql = (
+                    "UPDATE libros SET "
+                    + tabla
+                    + "=?"
+                    + ",titulo=?,autor=?,cliente=?,fechadev=?  WHERE id=? "
+                )
+                dato = (
+                    fecharetiro,
+                    titulo,
+                    autor,
+                    cliente,
+                    fechadev,
+                    id_modif,
+                )  # tupla de datos
+            else:
+                if selection.lower() == "çliente":
+                    sql = ""
+                    tabla = "cliente"
+                    sql = (
+                        "UPDATE libros SET "
+                        + tabla
+                        + "=?"
+                        + ",titulo=?,autor=?,fecharetiro=?,fechadev=?  WHERE id=? "
+                    )
+                    dato = (
+                        cliente,
+                        titulo,
+                        autor,
+                        fecharetiro,
+                        fechadev,
+                        id_modif,
+                    )  # tupla de datos
+                else:
+                    if selection.lower() == "devolucion":
+                        tabla = "fechadev"
+                        sql = ""
+                        sql = (
+                            "UPDATE libros SET "
+                            + tabla
+                            + "=?"
+                            + ",titulo=?,autor=?,fecharetiro=?,cliente=?  WHERE id=? "
+                        )
+                        dato = (
+                            fechadev,
+                            titulo,
+                            autor,
+                            fecharetiro,
+                            cliente,
+                            id_modif,
+                        )  # tupla de datos
+                    else:
+                        showerror(
+                            "Error",
+                            "Debe elegir un elmento de la lista antes de modificar",
+                        )
+                        vaciar()
+                        return
+                        # salir()
+
     cursor.execute(sql, dato)
     con.commit()
 
     showinfo("Perfecto!!", "Sus datos han sido modificados con exito!")
     actualizar_treeview(tree)
+    vaciar()
 
 
 try:
@@ -136,7 +278,7 @@ except:
     print("Hay un error")
 # enconding: utf-8
 
-################## interface de prueba
+################## MAIN #########################################
 
 root = Tk()
 
@@ -313,7 +455,14 @@ boton_alta.grid(
 boton_consulta = Button(
     root,
     text="Buscar",
-    command=lambda: consultar(intro1.get(), tree),
+    command=lambda: consultar(
+        intro1.get(),
+        intro2.get(),
+        intro3.get(),
+        intro4.get(),
+        intro5.get(),
+        tree,
+    ),
     borderwidth=5,
     cursor="hand1",
 )
@@ -334,7 +483,6 @@ boton_modif = Button(
         intro4.get(),
         intro5.get(),
         tree,
-        " titulo ",
     ),
     borderwidth=5,
     cursor="hand1",
