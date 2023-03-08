@@ -48,15 +48,20 @@ def salir():
 
 
 def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
-    con = conectar()
-    cursor = con.cursor()
-    data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
-    sql = "INSERT INTO libros(titulo, autor, fecharetiro, cliente,fechadev) VALUES(?, ?, ?,?,?)"
-    cursor.execute(sql, data)
-    con.commit()
-    showinfo("Perfecto!!", "Sus datos han sido guardados con exito!")
-    vaciar()
-    actualizar_treeview(tree)
+    cadena = titulo
+    patron="^[A-Za-záéíóú]*$"  #regex para el campo cadena
+    if(re.match(patron, cadena)):
+        con = conectar()
+        cursor = con.cursor()
+        data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
+        sql = "INSERT INTO libros(titulo, autor, fecharetiro, cliente,fechadev) VALUES(?, ?, ?,?,?)"
+        cursor.execute(sql, data)
+        con.commit()
+        showinfo("Perfecto!!", "Sus datos han sido guardados con exito!")
+        vaciar()
+        actualizar_treeview(tree)
+    else:
+        showinfo("Error", "Emplee solo caracteres alfabeticos")
 
 
 def actualizar_treeview(mitreview):
