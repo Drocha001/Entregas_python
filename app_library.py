@@ -11,6 +11,8 @@ from tkinter.filedialog import askopenfilename
 """
 prueba
 """
+
+
 # #########
 # enconding: utf-8
 def vaciar():
@@ -30,7 +32,7 @@ def crear_tb():
     conex = conectar()
 
     cursor = conex.cursor()
-    tabla = """CREATE TABLE libros
+    tabla = """CREATE TABLE IF NOT EXISTS libros
              (id INTEGER PRIMARY KEY AUTOINCREMENT,
              titulo varchar(80) NOT NULL, 
              autor varchar(80) NOT NULL,             
@@ -51,8 +53,8 @@ def salir():
 
 def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
     cadena = titulo
-    patron="^[A-Za-záéíóú]*$"  #regex para el campo cadena
-    if(re.match(patron, cadena)):
+    patron = "^[A-Za-záéíóú]*$"  # regex para el campo cadena
+    if re.match(patron, cadena):
         con = conectar()
         cursor = con.cursor()
         data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
