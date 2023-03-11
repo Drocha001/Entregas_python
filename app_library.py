@@ -15,6 +15,25 @@ prueba
 
 # #########
 # enconding: utf-8
+def apago_campos():
+    entrada1 = ttk.Entry(state=tk.DISABLED)
+    entrada2 = ttk.Entry(state=tk.DISABLED)
+    entrada3 = ttk.Entry(state=tk.DISABLED)
+    entrada4 = ttk.Entry(state=tk.DISABLED)
+    entrada5 = ttk.Entry(state=tk.DISABLED)
+
+
+def prendo_aceptar():
+    boton_salir = Button(
+        root,
+        text="Cancelar",
+        command=lambda: salir(),
+        borderwidth=5,
+        cursor="hand1",
+        state=tk.DISABLED,
+    )
+
+
 def vaciar():
     entrada1.delete(0, END)
     entrada2.delete(0, END)
@@ -312,13 +331,12 @@ libro.grid(
     column=0,
     sticky=W,
 )
-libro = Label(root, text="Creiterio: ")
-libro.grid(
-    row=1,
-    column=2,
-    sticky=E,
-)
-
+# libro = Label(root, text="Creiterio: ")
+# libro.grid(
+#    row=1,
+#    column=2,
+#    sticky=E,
+# )
 autor = Label(root, text="Autor")
 autor.grid(row=2, column=0, sticky=W)
 
@@ -349,7 +367,7 @@ intro1, intro2, intro3, intro4, intro5 = (
     StringVar(),
 )
 
-
+# entrada1 = ttk.Entry(state=tk.DISABLED)
 entrada1 = Entry(
     root,
     textvariable=intro1,
@@ -441,6 +459,7 @@ tree.heading("col4", text="Cliente")
 tree.heading("col5", text="Devolucion")
 
 
+apago_campos()
 boton_alta = Button(
     root,
     text="Alta",
@@ -456,7 +475,8 @@ boton_alta = Button(
     cursor="hand1",
 )
 boton_alta.grid(
-    row=8,
+    # row=8,
+    row=19,
     column=0,
     sticky=W + E,
 )
@@ -476,7 +496,7 @@ boton_consulta = Button(
     cursor="hand1",
 )
 boton_consulta.grid(
-    row=8,
+    row=19,
     column=1,
     sticky=W + E,
 )
@@ -497,7 +517,7 @@ boton_modif = Button(
     cursor="hand1",
 )
 boton_modif.grid(
-    row=8,
+    row=19,
     column=2,
     sticky=W + E,
 )
@@ -512,7 +532,7 @@ boton_borrar = Button(
     cursor="hand1",
 )
 boton_borrar.grid(
-    row=8,
+    row=19,
     column=3,
     sticky=W + E,
 )
@@ -520,16 +540,41 @@ boton_salir = Button(
     root, text="Salir", command=lambda: salir(), borderwidth=5, cursor="hand1"
 )
 boton_salir.grid(
-    row=8,
+    row=19,
+    column=13,
+    sticky=E + W,
+)
+boton_salir = Button(
+    root,
+    text="Aceptar",
+    command=lambda: salir(),
+    borderwidth=5,
+    cursor="hand1",
+    state=tk.DISABLED,
+)
+boton_salir.grid(
+    row=19,
+    column=8,
+    sticky=E + W,
+)
+boton_salir = Button(
+    root,
+    text="Cancelar",
+    command=lambda: salir(),
+    borderwidth=5,
+    cursor="hand1",
+    state=tk.DISABLED,
+)
+boton_salir.grid(
+    row=19,
     column=9,
     sticky=E + W,
 )
-
-combo = ttk.Combobox(
-    state="readonly",
-    values=["Titulo", "Autor", "Retiro", "Cliente", "Devolucion"],
-)
-combo.place(x=550, y=40)
+# combo = ttk.Combobox(
+#  state="readonly",
+#  values=["Titulo", "Autor", "Retiro", "Cliente", "Devolucion"],
+# )
+# combo.place(x=550, y=40)b
 
 
 root.mainloop()
