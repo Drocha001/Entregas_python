@@ -1,13 +1,16 @@
 from tkinter import *
 from tkinter import messagebox, ttk
 from tkinter.messagebox import *
+from tkinter.messagebox import showinfo
 import sqlite3
 from tkinter import ttk
 import re
 import sys
+from datetime import date, timedelta
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 
+flag = "off"
 """
 prueba
 """
@@ -15,6 +18,29 @@ prueba
 
 # #########
 # enconding: utf-8
+
+
+def seleccion():
+    print("selecto")
+
+
+def gg(br, tree):
+    global flag
+    # datos=tree.item(br).get("text")
+    datos = tree.item(br).get("values")
+
+    intro1.set(datos[0]),
+    intro2.set(datos[1]),
+    intro3.set(datos[2]),
+    intro4.set(datos[3]),
+    intro5.set(datos[4]),
+    # activo el boton aceptar
+    flag = "on"
+
+
+# vaciar()
+
+
 def apago_campos():
     entrada1 = ttk.Entry(state=tk.DISABLED)
     entrada2 = ttk.Entry(state=tk.DISABLED)
@@ -50,8 +76,8 @@ def conectar():
 def crear_tb():
     conex = conectar()
 
-    cursor = conex.cursor()
-    tabla = """CREATE TABLE IF NOT EXISTS libros
+    cursor = conex.cursor()  # evitamos que ocurra un error si la tabla ya existe
+    tabla = """CREATE TABLE IF NOT EXISTS libros  
              (id INTEGER PRIMARY KEY AUTOINCREMENT,
              titulo varchar(80) NOT NULL, 
              autor varchar(80) NOT NULL,             
@@ -71,20 +97,38 @@ def salir():
 
 
 def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
-    cadena = titulo
-    patron = "^[A-Za-záéíóú]*$"  # regex para el campo cadena
-    if re.match(patron, cadena):
-        con = conectar()
-        cursor = con.cursor()
-        data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
-        sql = "INSERT INTO libros(titulo, autor, fecharetiro, cliente,fechadev) VALUES(?, ?, ?,?,?)"
-        cursor.execute(sql, data)
-        con.commit()
-        showinfo("Perfecto!!", "Sus datos han sido guardados con exito!")
-        vaciar()
-        actualizar_treeview(tree)
-    else:
-        showinfo("Error", "Emplee solo caracteres alfabeticos")
+    patron_titulo = "^[A-Za-záéíóúüÜñÑ0-9\s]+$"
+    patron_autor = "^[A-Za-záéíóúüÜñÑ\s]+$"
+    patron_cliente = "^[0-9]*$"
+
+    if not all(
+        re.match(patron, cadena)
+        for patron, cadena in [
+            (patron_titulo, titulo),
+            (patron_autor, autor),
+            (patron_cliente, cliente),
+        ]
+    ):
+        print("Error en los datos")
+        return
+
+    con = conectar()
+    cursor = con.cursor()
+
+    data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
+
+    sql = "INSERT INTO libros(titulo, autor, fecharetiro, cliente, fechadev) VALUES(?, ?, ?, ?, ?)"
+    cursor.execute(sql, data)
+    con.commit()
+
+    showinfo("¡Perfecto!", "¡Sus datos han sido guardados con éxito!")
+    vaciar()
+    actualizar_treeview(tree)
+
+    intro3.set(date.today().strftime("%d/%m/%Y"))
+    intro5.set((date.today() + timedelta(days=14)).strftime("%d/%m/%Y"))
+
+    return "DISABLED"
 
 
 def actualizar_treeview(mitreview):
@@ -107,7 +151,7 @@ def actualizar_treeview(mitreview):
 
 
 def consultar(titulo, autor, retiro, cliente, dev, tree):
-    selection = combo.get()
+    # selection = combo.get()
     tabla = ""
     sql = ""
     # sql = "SELECT * FROM libros WHERE "+tabla+"=?"
@@ -183,113 +227,44 @@ def borrar(br, tree):
 
 
 def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
+    # gg(br, tree)
+    #############
+    # datos = tree.item(br).get("values")
+    # intro1.set(datos[0]),
+    # intro2.set(datos[1]),
+    # intro3.set(datos[2]),
+    # intro4.set(datos[3]),
+    # intro5.set(datos[4]),
+    #############
     con = conectar()
     cursor = con.cursor()
     id_modif = tree.item(br).get("text")  # obtiene el Id para modificar
-    selection = combo.get()
+    # selection = combo.get()
     tabla = ""
     sql = ""
     # 1) VOY A AVERIGUAR QUE OPCION ELIGIO EL USUARIO
 
-    if selection.lower() == "titulo":
-        tabla = "titulo"
-        # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
-        sql = ""
-        sql = (
-            "UPDATE libros SET "
-            + tabla
-            + "=?"
-            + ",autor=?, fecharetiro=?, cliente=?,fechadev=?  WHERE id=? "
-        )
-        dato = (
-            titulo,
-            autor,
-            fecharetiro,
-            cliente,
-            fechadev,
-            id_modif,
-        )  # tupla de datos
-    else:
-        if selection.lower() == "autor":
-            sql = ""
-            tabla = "autor"
-            # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
-            sql = (
-                "UPDATE libros SET "
-                + tabla
-                + "=?"
-                + ",titulo=?, fecharetiro=?, cliente=?,fechadev=?  WHERE id=? "
-            )
-            dato = (
-                autor,
-                titulo,
-                fecharetiro,
-                cliente,
-                fechadev,
-                id_modif,
-            )  # tupla de datos
-        else:
-            if selection.lower() == "retiro":
-                sql = ""
-                tabla = "fecharetiro"
-                sql = (
-                    "UPDATE libros SET "
-                    + tabla
-                    + "=?"
-                    + ",titulo=?,autor=?,cliente=?,fechadev=?  WHERE id=? "
-                )
-                dato = (
-                    fecharetiro,
-                    titulo,
-                    autor,
-                    cliente,
-                    fechadev,
-                    id_modif,
-                )  # tupla de datos
-            else:
-                if selection.lower() == "çliente":
-                    sql = ""
-                    tabla = "cliente"
-                    sql = (
-                        "UPDATE libros SET "
-                        + tabla
-                        + "=?"
-                        + ",titulo=?,autor=?,fecharetiro=?,fechadev=?  WHERE id=? "
-                    )
-                    dato = (
-                        cliente,
-                        titulo,
-                        autor,
-                        fecharetiro,
-                        fechadev,
-                        id_modif,
-                    )  # tupla de datos
-                else:
-                    if selection.lower() == "devolucion":
-                        tabla = "fechadev"
-                        sql = ""
-                        sql = (
-                            "UPDATE libros SET "
-                            + tabla
-                            + "=?"
-                            + ",titulo=?,autor=?,fecharetiro=?,cliente=?  WHERE id=? "
-                        )
-                        dato = (
-                            fechadev,
-                            titulo,
-                            autor,
-                            fecharetiro,
-                            cliente,
-                            id_modif,
-                        )  # tupla de datos
-                    else:
-                        showerror(
-                            "Error",
-                            "Debe elegir un elmento de la lista antes de modificar",
-                        )
-                        vaciar()
-                        return
-                        # salir()
+    tabla = "titulo"
+    # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+    sql = ""
+    sql = (
+        "UPDATE libros SET "
+        + tabla
+        + "=?"
+        + ",autor=?, fecharetiro=?, cliente=?,fechadev=?  WHERE id=? "
+    )
+    dato = (
+        titulo,
+        autor,
+        fecharetiro,
+        cliente,
+        fechadev,
+        id_modif,
+    )  # tupla de datos
+
+    # vaciar()
+
+    # salir()
 
     cursor.execute(sql, dato)
     con.commit()
@@ -362,9 +337,9 @@ dev.grid
 intro1, intro2, intro3, intro4, intro5 = (
     StringVar(),
     StringVar(),
+    StringVar(value=date.today().strftime("%d/%m/%Y")),
     StringVar(),
-    StringVar(),
-    StringVar(),
+    StringVar(value=(date.today() + timedelta(days=14)).strftime("%d/%m/%Y")),
 )
 
 # entrada1 = ttk.Entry(state=tk.DISABLED)
@@ -457,7 +432,7 @@ tree.heading("col2", text="Autor")
 tree.heading("col3", text="Retiro")
 tree.heading("col4", text="Cliente")
 tree.heading("col5", text="Devolucion")
-
+# tree.bind("<<TreeviewSelect>>", seleccion())
 
 apago_campos()
 boton_alta = Button(
@@ -473,6 +448,7 @@ boton_alta = Button(
     ),
     borderwidth=5,
     cursor="hand1",
+    # takefocus=False
 )
 boton_alta.grid(
     # row=8,
@@ -504,13 +480,8 @@ boton_consulta.grid(
 boton_modif = Button(
     root,
     text="Modificar",
-    command=lambda: modificar(
+    command=lambda: gg(
         tree.focus(),
-        intro1.get(),
-        intro2.get(),
-        intro3.get(),
-        intro4.get(),
-        intro5.get(),
         tree,
     ),
     borderwidth=5,
@@ -537,35 +508,48 @@ boton_borrar.grid(
     sticky=W + E,
 )
 boton_salir = Button(
-    root, text="Salir", command=lambda: salir(), borderwidth=5, cursor="hand1"
+    root,
+    text="Salir",
+    command=lambda: salir(),
+    borderwidth=5,
+    cursor="hand1",
 )
 boton_salir.grid(
     row=19,
     column=13,
     sticky=E + W,
 )
-boton_salir = Button(
+boton_aceptar = Button(
     root,
     text="Aceptar",
-    command=lambda: salir(),
+    command=lambda: modificar(
+        tree.focus(),
+        intro1.get(),
+        intro2.get(),
+        intro3.get(),
+        intro4.get(),
+        intro5.get(),
+        tree,
+    ),
     borderwidth=5,
     cursor="hand1",
-    state=tk.DISABLED,
+    # state=flag,
 )
-boton_salir.grid(
+boton_aceptar.grid(
     row=19,
     column=8,
     sticky=E + W,
 )
-boton_salir = Button(
+boton_cancelar = Button(
     root,
     text="Cancelar",
     command=lambda: salir(),
     borderwidth=5,
     cursor="hand1",
-    state=tk.DISABLED,
 )
-boton_salir.grid(
+
+
+boton_cancelar.grid(
     row=19,
     column=9,
     sticky=E + W,
@@ -575,6 +559,26 @@ boton_salir.grid(
 #  values=["Titulo", "Autor", "Retiro", "Cliente", "Devolucion"],
 # )
 # combo.place(x=550, y=40)b
+""" 
+def seleccionar(mv, parametros):
+    try:
+        item = mv.selection()[0]
+    except IndexError:
+        messagebox.showwarning(message="Debe seleccionar un elemento.",
+            title="No hay selección")
+    else:
+        text = mv.item(item, option="text")
+        messagebox.showinfo(message=text, title="Selección")
 
+
+        data = mv.item(item)
+"""
+# tree.bind("<<TreeviewSelect>>", gg())
+""" if flag == "on":
+    boton_cancelar(state=tk.NORMAL),
+    boton_aceptar(state=tk.NORMAL),
+else:
+    boton_cancelar(state=tk.DISABLED),
+    boton_aceptar(state=tk.DISABLED),"""
 
 root.mainloop()
