@@ -110,6 +110,7 @@ def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
         ]
     ):
         print("Error en los datos")
+        showinfo("¡Atención!", "Hay un error en los datos")
         return
 
     con = conectar()
@@ -172,7 +173,7 @@ def consultar(titulo, autor, retiro, cliente, dev, tree):
                 tabla = "fecharetiro"
 
             else:
-                if selection.lower() == "çliente":
+                if selection.lower() == "cliente":
                     sql = ""
                     tabla = "cliente"
 
@@ -243,7 +244,9 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
     tabla = ""
     sql = ""
     # 1) VOY A AVERIGUAR QUE OPCION ELIGIO EL USUARIO
-
+    showinfo("Perfecto!!", "Sus datos han sido modificados con exito!")
+    actualizar_treeview(tree)
+    vaciar()
     tabla = "titulo"
     # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
     sql = ""
@@ -268,10 +271,6 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
 
     cursor.execute(sql, dato)
     con.commit()
-
-    showinfo("Perfecto!!", "Sus datos han sido modificados con exito!")
-    actualizar_treeview(tree)
-    vaciar()
 
 
 try:
@@ -521,7 +520,7 @@ boton_salir.grid(
 )
 boton_aceptar = Button(
     root,
-    text="Aceptar",
+    text="Guardar cambios",
     command=lambda: modificar(
         tree.focus(),
         intro1.get(),
@@ -540,7 +539,7 @@ boton_aceptar.grid(
     column=8,
     sticky=E + W,
 )
-boton_cancelar = Button(
+"""boton_cancelar = Button(
     root,
     text="Cancelar",
     command=lambda: salir(),
@@ -559,22 +558,26 @@ boton_cancelar.grid(
 #  values=["Titulo", "Autor", "Retiro", "Cliente", "Devolucion"],
 # )
 # combo.place(x=550, y=40)b
-""" 
+"""
+
+
 def seleccionar(mv, parametros):
     try:
         item = mv.selection()[0]
     except IndexError:
-        messagebox.showwarning(message="Debe seleccionar un elemento.",
-            title="No hay selección")
+        messagebox.showwarning(
+            message="Debe seleccionar un elemento.", title="No hay selección"
+        )
     else:
         text = mv.item(item, option="text")
         messagebox.showinfo(message=text, title="Selección")
 
-
         data = mv.item(item)
+
+
 """
 # tree.bind("<<TreeviewSelect>>", gg())
-""" if flag == "on":
+if flag == "on":
     boton_cancelar(state=tk.NORMAL),
     boton_aceptar(state=tk.NORMAL),
 else:
