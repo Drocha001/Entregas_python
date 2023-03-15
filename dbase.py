@@ -10,7 +10,7 @@ from datetime import date, timedelta
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 
-state = ""
+estado = "ppppp"
 """
 prueba
 """
@@ -20,22 +20,10 @@ prueba
 # enconding: utf-8
 
 
-def validar ():
-    if state=="mod":
+def validar():
+    global estado
+    if estado == "modificar":
         lambda: modificar(
-        tree.focus(),
-        intro1.get(),
-        intro2.get(),
-        intro3.get(),
-        intro4.get(),
-        intro5.get(),
-        tree,
-        off_btn(),
-    ),
-        
-    else:
-        if state=="buscar":
-            lambda: modificar(
             tree.focus(),
             intro1.get(),
             intro2.get(),
@@ -45,9 +33,23 @@ def validar ():
             tree,
             off_btn(),
         ),
+
+    else:
+        if estado == "buscar":
+            lambda: modificar(
+                tree.focus(),
+                intro1.get(),
+                intro2.get(),
+                intro3.get(),
+                intro4.get(),
+                intro5.get(),
+                tree,
+                off_btn(),
+            ),
         else:
             print("error en eleccion del estado")
-    state=""
+    estado = ""
+
 
 def seleccion():
     print("selecto")
@@ -206,8 +208,8 @@ def actualizar_treeview(mitreview):
 
 def consultar(titulo, autor, retiro, cliente, dev, tree):
     # selection = combo.get()
-    global state 
-    state ="consultar"
+    global estado
+    estado = "buscar"
     apago_campos()
     selection = titulo
     sql = ""
@@ -243,7 +245,7 @@ def consultar(titulo, autor, retiro, cliente, dev, tree):
     entrada4.insert(0, cliente)
     entrada5.insert(0, dev)
     # apago_capos
-    
+
     prendo_campos()
 
 
@@ -268,7 +270,7 @@ def borrar(br, tree):
 
 
 def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
-    global state
+    global estado
     # gg(br, tree)
     #############
     # datos = tree.item(br).get("values")
@@ -278,7 +280,7 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
     # intro4.set(datos[3]),
     # intro5.set(datos[4]),
     #############
-    state="modificar"
+    estado = "modificar"
     con = conectar()
     cursor = con.cursor()
     id_modif = tree.item(br).get("text")  # obtiene el Id para modificar
@@ -501,16 +503,16 @@ boton_alta.grid(
 boton_consulta = Button(
     root,
     text="Buscar",
-    command=lambda:validar( ),
-   # """
-   # command=lambda: consultar(
-   #     intro1.get(),
-   #     intro2.get(),
-   #     intro3.get(),
-   #     intro4.get(),
-   #     intro5.get(),
-   #     tree,
-   # ),"""
+    command=lambda: validar(),
+    # """
+    # command=lambda: consultar(
+    #     intro1.get(),
+    #     intro2.get(),
+    #     intro3.get(),
+    #     intro4.get(),
+    #     intro5.get(),
+    #     tree,
+    # ),"""
     borderwidth=5,
     cursor="hand1",
 )
@@ -566,17 +568,17 @@ boton_salir.grid(
 boton_aceptar = Button(
     root,
     text="Guardar cambios",
-    command=lambda:validar( )
-    """command=lambda: modificar(
-        tree.focus(),
-        intro1.get(),
-        intro2.get(),
-        intro3.get(),
-        intro4.get(),
-        intro5.get(),
-        tree,
-        off_btn(),
-    ),"""
+    command=lambda: validar(),
+    # """command=lambda: modificar(
+    #    tree.focus(),
+    #    intro1.get(),
+    #    intro2.get(),
+    #    intro3.get(),
+    #    intro4.get(),
+    #    intro5.get(),
+    #    tree,
+    #    off_btn(),
+    # ),"""
     borderwidth=5,
     cursor="hand1",
     # state=flag,
