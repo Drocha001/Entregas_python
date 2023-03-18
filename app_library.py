@@ -10,7 +10,7 @@ from datetime import date, timedelta
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 
-flag = "off"
+estado = ""
 """
 prueba
 """
@@ -20,13 +20,71 @@ prueba
 # enconding: utf-8
 
 
-def seleccion():
-    print("selecto")
+def pres_alta():
+    # venimos del boton antes de ejecutaralta
+    global estado
+    estado = "alta"
+    off_btn()
+    prendo_campos()
+    # entrada1.config(state="normal")  # solo prendo el campo de titulo
+
+
+def validar():
+    global estado
+    if estado == "consulta":
+        consultar(titulo, autor, retiro, cliente, dev, tree)
+
+    else:
+        if estado == "modificar":
+            # lamda
+            modificar(
+                tree.focus(),
+                intro1.get(),
+                intro2.get(),
+                intro3.get(),
+                intro4.get(),
+                intro5.get(),
+                tree,
+            ),  # off_btn(),
+        else:
+            if estado == "alta":
+                cargar(
+                    intro1.get(),
+                    intro2.get(),
+                    intro3.get(),
+                    intro4.get(),
+                    intro5.get(),
+                    tree,
+                ),
+
+            else:
+                print("error en eleccion del estado")
+    estado = ""
+
+
+def on_btn():
+    boton_alta.config(state="normal")
+    boton_consulta.config(state="normal")
+    boton_modif.config(state="normal")
+    boton_borrar.config(state="normal")
+    boton_salir.config(state="normal")
+    boton_aceptar.config(state="disabled")
+    boton_cancelar.config(state="disabled")
+
+
+def off_btn():
+    boton_alta.config(state="disabled")
+    boton_consulta.config(state="disabled")
+    boton_modif.config(state="disabled")
+    boton_borrar.config(state="disabled")
+    boton_salir.config(state="disabled")
+    boton_aceptar.config(state="normal")
+    boton_cancelar.config(state="normal")
 
 
 def gg(br, tree):
-    global flag
     # datos=tree.item(br).get("text")
+
     datos = tree.item(br).get("values")
 
     intro1.set(datos[0]),
@@ -34,22 +92,32 @@ def gg(br, tree):
     intro3.set(datos[2]),
     intro4.set(datos[3]),
     intro5.set(datos[4]),
-    # activo el boton aceptar
-    flag = "on"
+    prendo_campos()
+    off_btn()
 
 
 # vaciar()
 
 
 def apago_campos():
-    entrada1 = ttk.Entry(state=tk.DISABLED)
-    entrada2 = ttk.Entry(state=tk.DISABLED)
-    entrada3 = ttk.Entry(state=tk.DISABLED)
-    entrada4 = ttk.Entry(state=tk.DISABLED)
-    entrada5 = ttk.Entry(state=tk.DISABLED)
+    # entrada1 = tk.Entry(state=tk.DISABLED)
+    entrada1.config(state="disabled")
+    entrada2.config(state="disabled")
+    entrada3.config(state="disabled")
+    entrada4.config(state="disabled")
+    entrada5.config(state="disabled")
 
 
-def prendo_aceptar():
+def prendo_campos():
+    # entrada1 = tk.Entry(state=tk.DISABLED)
+    entrada1.config(state="normal")
+    entrada2.config(state="normal")
+    entrada3.config(state="normal")
+    entrada4.config(state="normal")
+    entrada5.config(state="normal")
+
+
+def prendo_aceptar():  ## para borrar
     boton_salir = Button(
         root,
         text="Cancelar",
@@ -84,7 +152,6 @@ def crear_tb():
              fecharetiro varchar(8) NOT NULL,
              cliente varchar(80) NOT NULL,
              fechadev varchar(8) NOT NULL,
-
              copias int,
              precio real)
     """
@@ -109,27 +176,28 @@ def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
             (patron_cliente, cliente),
         ]
     ):
+        con = conectar()
+        cursor = con.cursor()
+
+        data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
+
+        sql = "INSERT INTO libros(titulo, autor, fecharetiro, cliente, fechadev) VALUES(?, ?, ?, ?, ?)"
+        cursor.execute(sql, data)
+        con.commit()
+
+        showinfo("¡Perfecto!", "¡Sus datos han sido guardados con éxito!")
+        vaciar()
+        on_btn()
+        apago_campos()
+        actualizar_treeview(tree)
+
+        intro3.set(date.today().strftime("%d/%m/%Y"))
+        intro5.set((date.today() + timedelta(days=14)).strftime("%d/%m/%Y"))
+
+    else:
         print("Error en los datos")
         showinfo("¡Atención!", "Hay un error en los datos")
         return
-
-    con = conectar()
-    cursor = con.cursor()
-
-    data = (titulo, autor, fecha_retiro, cliente, fecha_dev)
-
-    sql = "INSERT INTO libros(titulo, autor, fecharetiro, cliente, fechadev) VALUES(?, ?, ?, ?, ?)"
-    cursor.execute(sql, data)
-    con.commit()
-
-    showinfo("¡Perfecto!", "¡Sus datos han sido guardados con éxito!")
-    vaciar()
-    actualizar_treeview(tree)
-
-    intro3.set(date.today().strftime("%d/%m/%Y"))
-    intro5.set((date.today() + timedelta(days=14)).strftime("%d/%m/%Y"))
-
-    return "DISABLED"
 
 
 def actualizar_treeview(mitreview):
@@ -151,64 +219,62 @@ def actualizar_treeview(mitreview):
         )
 
 
+def pres_consulta():
+    # venimos del boton antes de ejecutar la consulta
+    global estado
+    estado = "consulta"
+    off_btn()
+    apago_campos()
+    entrada1.config(state="normal")  # solo prendo el campo de titulo
+
+
+def pres_modif():
+    # venimos del boton antes de ejecutar modificar
+    global estado
+    estado = "modificar"
+    off_btn()
+    apago_campos()
+    entrada1.config(state="normal")  # solo prendo el campo de titulo
+    gg(
+        tree.focus(),
+        tree,
+    )
+
+
+# voy a aplicar ####################################################################################################################
+
+
 def consultar(titulo, autor, retiro, cliente, dev, tree):
-    # selection = combo.get()
-    tabla = ""
+    selection = intro1.get()
+
     sql = ""
-    # sql = "SELECT * FROM libros WHERE "+tabla+"=?"
-    ######################################################################################
-    if selection.lower() == "titulo":
-        tabla = "titulo"
-        # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+    sql = "SELECT * FROM libros WHERE titulo=?"
 
-    else:
-        if selection.lower() == "autor":
-            sql = ""
-            tabla = "autor"
-            # sql = "SELECT * FROM libros WHERE "+tabla+"=?"
-            # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
+    vaciar()
 
-            if selection.lower() == "retiro":
-                sql = ""
-                tabla = "fecharetiro"
-
-            else:
-                if selection.lower() == "cliente":
-                    sql = ""
-                    tabla = "cliente"
-
-                else:
-                    if selection.lower() == "devolucion":
-                        tabla = "fechadev"
-
-                    else:
-                        showerror(
-                            "Error",
-                            "Debe elegir un elmento de la lista antes de modificar",
-                        )
-                        vaciar()
-                        return
-    ######################################################################################
-    sql = "SELECT * FROM libros WHERE " + tabla + "=?"
-    # sql = "SELECT * FROM libros WHERE titulo =?  "
-    dato = (tabla,)
+    dato = (selection,)
     con = conectar()
     cursor = con.cursor()
     cursor.execute(sql, dato)
     con.commit()
     resultado = cursor.fetchall()
-    # print(resultado)
-    # actualizar_treeview(tree)
-    vaciar()
-    entrada1.insert(0, titulo)
-    entrada2.insert(0, autor)
-    entrada3.insert(0, retiro)
-    entrada4.insert(0, cliente)
-    entrada5.insert(0, dev)
+
+    if len(resultado) == 0:
+        messagebox.showwarning(title="informacion", message="El tinulo no existe")
+        apago_campos()
+        on_btn()
+        return
+
+    else:
+        mostrar = ver = resultado[0]
+        mostrar = "El titulo encontrado es: " + str(mostrar[1])
+        messagebox.showinfo(title="informacion", message=mostrar)
+
+    apago_campos()
+    on_btn()
 
 
 def borrar(br, tree):
-    # agregar confirmacion
     if askyesno("Eliminar datos", "Desea eliminar esta entrada??"):
         showinfo("Borrar: ", "Eliminando...")
         ######### BORRADO ####################
@@ -228,6 +294,7 @@ def borrar(br, tree):
 
 
 def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
+    global estado
     # gg(br, tree)
     #############
     # datos = tree.item(br).get("values")
@@ -237,6 +304,7 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
     # intro4.set(datos[3]),
     # intro5.set(datos[4]),
     #############
+    # estado = "modificar"
     con = conectar()
     cursor = con.cursor()
     id_modif = tree.item(br).get("text")  # obtiene el Id para modificar
@@ -244,9 +312,7 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
     tabla = ""
     sql = ""
     # 1) VOY A AVERIGUAR QUE OPCION ELIGIO EL USUARIO
-    showinfo("Perfecto!!", "Sus datos han sido modificados con exito!")
-    actualizar_treeview(tree)
-    vaciar()
+
     tabla = "titulo"
     # voy a concatenar la variable para crear la instruccion a ejecutar segun la elecion del usuario
     sql = ""
@@ -271,6 +337,11 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
 
     cursor.execute(sql, dato)
     con.commit()
+    showinfo("Perfecto!!", "Sus datos han sido modificados con exito!")
+    actualizar_treeview(tree)
+    vaciar()
+    apago_campos()
+    on_btn()
 
 
 try:
@@ -305,6 +376,7 @@ libro.grid(
     column=0,
     sticky=W,
 )
+
 # libro = Label(root, text="Creiterio: ")
 # libro.grid(
 #    row=1,
@@ -374,7 +446,7 @@ entrada5 = Entry(
 )
 entrada5.grid(row=5, column=1, sticky=W + E)
 
-
+apago_campos()
 # TREEVIEW
 
 
@@ -433,18 +505,11 @@ tree.heading("col4", text="Cliente")
 tree.heading("col5", text="Devolucion")
 # tree.bind("<<TreeviewSelect>>", seleccion())
 
-apago_campos()
+# apago_campos()
 boton_alta = Button(
     root,
     text="Alta",
-    command=lambda: cargar(
-        intro1.get(),
-        intro2.get(),
-        intro3.get(),
-        intro4.get(),
-        intro5.get(),
-        tree,
-    ),
+    command=lambda: pres_alta(),
     borderwidth=5,
     cursor="hand1",
     # takefocus=False
@@ -459,14 +524,17 @@ boton_alta.grid(
 boton_consulta = Button(
     root,
     text="Buscar",
-    command=lambda: consultar(
-        intro1.get(),
-        intro2.get(),
-        intro3.get(),
-        intro4.get(),
-        intro5.get(),
-        tree,
-    ),
+    command=lambda: pres_consulta(),
+    # validar(),
+    # """
+    # command=lambda: consultar(
+    #     intro1.get(),
+    #     intro2.get(),
+    #     intro3.get(),
+    #     intro4.get(),
+    #     intro5.get(),
+    #     tree,
+    # ),"""
     borderwidth=5,
     cursor="hand1",
 )
@@ -479,10 +547,8 @@ boton_consulta.grid(
 boton_modif = Button(
     root,
     text="Modificar",
-    command=lambda: gg(
-        tree.focus(),
-        tree,
-    ),
+    command=lambda: pres_modif(),
+    # off_btn(),
     borderwidth=5,
     cursor="hand1",
 )
@@ -520,16 +586,18 @@ boton_salir.grid(
 )
 boton_aceptar = Button(
     root,
-    text="Guardar cambios",
-    command=lambda: modificar(
-        tree.focus(),
-        intro1.get(),
-        intro2.get(),
-        intro3.get(),
-        intro4.get(),
-        intro5.get(),
-        tree,
-    ),
+    text="Aplicar cambios",
+    command=lambda: validar(),
+    # """command=lambda: modificar(
+    #    tree.focus(),
+    #    intro1.get(),
+    #    intro2.get(),
+    #    intro3.get(),
+    #    intro4.get(),
+    #    intro5.get(),
+    #    tree,
+    #    off_btn(),
+    # ),"""
     borderwidth=5,
     cursor="hand1",
     # state=flag,
@@ -539,20 +607,19 @@ boton_aceptar.grid(
     column=8,
     sticky=E + W,
 )
-"""boton_cancelar = Button(
+boton_cancelar = Button(
     root,
     text="Cancelar",
     command=lambda: salir(),
     borderwidth=5,
     cursor="hand1",
 )
-
-
 boton_cancelar.grid(
     row=19,
     column=9,
     sticky=E + W,
 )
+"""
 # combo = ttk.Combobox(
 #  state="readonly",
 #  values=["Titulo", "Autor", "Retiro", "Cliente", "Devolucion"],
@@ -583,5 +650,5 @@ if flag == "on":
 else:
     boton_cancelar(state=tk.DISABLED),
     boton_aceptar(state=tk.DISABLED),"""
-
+on_btn()
 root.mainloop()
