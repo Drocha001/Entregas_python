@@ -10,15 +10,15 @@ from datetime import date, timedelta
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 
+
+# Flag, para decirle al boton guardar cambios que tiene que hacer
 estado = ""
 """
 prueba
 """
 
-
 # #########
 # enconding: utf-8
-
 
 def pres_alta():
     # venimos del boton antes de ejecutaralta
@@ -27,7 +27,6 @@ def pres_alta():
     off_btn()
     prendo_campos()
     # entrada1.config(state="normal")  # solo prendo el campo de titulo
-
 
 def validar():
     global estado
@@ -98,7 +97,6 @@ def gg(br, tree):
 
 # vaciar()
 
-
 def apago_campos():
     # entrada1 = tk.Entry(state=tk.DISABLED)
     entrada1.config(state="disabled")
@@ -107,7 +105,6 @@ def apago_campos():
     entrada4.config(state="disabled")
     entrada5.config(state="disabled")
 
-
 def prendo_campos():
     # entrada1 = tk.Entry(state=tk.DISABLED)
     entrada1.config(state="normal")
@@ -115,7 +112,6 @@ def prendo_campos():
     entrada3.config(state="normal")
     entrada4.config(state="normal")
     entrada5.config(state="normal")
-
 
 def prendo_aceptar():  ## para borrar
     boton_salir = Button(
@@ -164,6 +160,7 @@ def salir():
 
 
 def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
+    # Se define caracteres a utilizar en los campos: Titulo, Autor, Cliente
     patron_titulo = "^[A-Za-záéíóúüÜñÑ0-9\s]+$"
     patron_autor = "^[A-Za-záéíóúüÜñÑ\s]+$"
     patron_cliente = "^[0-9]*$"
@@ -276,7 +273,7 @@ def consultar(titulo, autor, retiro, cliente, dev, tree):
 
 def borrar(br, tree):
     if askyesno("Eliminar datos", "Desea eliminar esta entrada??"):
-        showinfo("Borrar: ", "Eliminando...")
+        showinfo("Borrar: ", "Eliminado")
         ######### BORRADO ####################
         # obtengo el id para buscar en la base de datos
         borrar = tree.item(br).get("text")
@@ -355,15 +352,15 @@ except:
 
 root = Tk()
 
-
+root.configure(background="#c3ccb1")
 root.title("X Library")
 root.geometry("835x410")
 titulo = Label(
     root,
     text=" Despacho de Libros",
-    font=("Arial", 20),
-    bg="grey",
-    fg="white",
+    font=("Poor Richard", 20),
+    bg="#000000",
+    fg="#FFFFFF",
     height=1,
     width=50,
 )
@@ -402,7 +399,6 @@ dev.grid(
     sticky=W,
 )
 dev.grid
-
 
 # Defino variables para tomar valores de campos de entrada
 intro1, intro2, intro3, intro4, intro5 = (
@@ -448,7 +444,6 @@ entrada5.grid(row=5, column=1, sticky=W + E)
 
 apago_campos()
 # TREEVIEW
-
 
 tree = ttk.Treeview(root)
 actualizar_treeview(tree)
@@ -513,7 +508,8 @@ boton_alta = Button(
     borderwidth=5,
     cursor="hand1",
     # takefocus=False
-)
+    )
+
 boton_alta.grid(
     # row=8,
     row=19,
@@ -552,11 +548,13 @@ boton_modif = Button(
     borderwidth=5,
     cursor="hand1",
 )
+
 boton_modif.grid(
     row=19,
     column=2,
     sticky=W + E,
 )
+
 boton_borrar = Button(
     root,
     text="Borrar",
@@ -567,11 +565,13 @@ boton_borrar = Button(
     borderwidth=5,
     cursor="hand1",
 )
+
 boton_borrar.grid(
     row=19,
     column=3,
     sticky=W + E,
 )
+
 boton_salir = Button(
     root,
     text="Salir",
@@ -584,6 +584,7 @@ boton_salir.grid(
     column=13,
     sticky=E + W,
 )
+
 boton_aceptar = Button(
     root,
     text="Aplicar cambios",
@@ -607,6 +608,7 @@ boton_aceptar.grid(
     column=8,
     sticky=E + W,
 )
+
 boton_cancelar = Button(
     root,
     text="Cancelar",
@@ -619,6 +621,7 @@ boton_cancelar.grid(
     column=9,
     sticky=E + W,
 )
+
 """
 # combo = ttk.Combobox(
 #  state="readonly",
@@ -626,7 +629,14 @@ boton_cancelar.grid(
 # )
 # combo.place(x=550, y=40)b
 """
-
+# Defino colores de los botones
+boton_alta.configure(background="#7A7F6F", foreground="#000000")
+boton_consulta.configure(background="#7A7F6F", foreground="#000000")
+boton_modif.configure(background="#7A7F6F", foreground="#000000")
+boton_borrar.configure(background="#7A7F6F", foreground="#000000")
+boton_salir.configure(background="#7A7F6F", foreground="#000000")
+boton_aceptar.configure(background="#7A7F6F", foreground="#000000")
+boton_cancelar.configure(background="#7A7F6F", foreground="#000000")
 
 def seleccionar(mv, parametros):
     try:
