@@ -249,7 +249,7 @@ def consultar(titulo, autor, retiro, cliente, dev, tree):
     resultado = cursor.fetchall()
 
     if len(resultado) == 0:
-        messagebox.showwarning(title="informacion", message="El tinulo no existe")
+        messagebox.showwarning(title="informacion", message="El titulo no existe")
         apago_campos()
         on_btn()
         return
