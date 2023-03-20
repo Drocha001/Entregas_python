@@ -59,9 +59,9 @@ def validar():
                     tree,
                 ),
 
-            else:
-                print("error en eleccion del estado")
-    estado = ""
+            #else:
+               # print("error en eleccion del estado")
+    #estado = ""
 
 
 def on_btn():
@@ -158,8 +158,9 @@ def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
     patron_titulo = "^[A-Za-záéíóúüÜñÑ0-9\s]+$"
     patron_autor = "^[A-Za-záéíóúüÜñÑ\s]+$"
     patron_cliente = "^[0-9]*$"
+    #patron_cliente = "[0-9]"
 
-    if not all(
+    if  all(
         re.match(patron, cadena)
         for patron, cadena in [
             (patron_titulo, titulo),
@@ -186,9 +187,10 @@ def cargar(titulo, autor, fecha_retiro, cliente, fecha_dev, tree):
         intro5.set((date.today() + timedelta(days=14)).strftime("%d/%m/%Y"))
 
     else:
+        
         print("Error en los datos")
         showinfo("¡Atención!", "Hay un error en los datos")
-        return
+    
 
 
 def actualizar_treeview(mitreview):
