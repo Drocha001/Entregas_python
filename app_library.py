@@ -13,11 +13,9 @@ from tkinter.filedialog import askopenfilename
 
 # Flag, para decirle al boton guardar cambios que tiene que hacer
 estado = ""
-"""
-prueba
-"""
 
-# #########
+
+
 # enconding: utf-8
 
 def pres_alta():
@@ -26,7 +24,7 @@ def pres_alta():
     estado = "alta"
     off_btn()
     prendo_campos()
-    # entrada1.config(state="normal")  # solo prendo el campo de titulo
+    
 
 def validar():
     global estado
@@ -44,7 +42,7 @@ def validar():
                 intro4.get(),
                 intro5.get(),
                 tree,
-            ),  # off_btn(),
+            ),  
         else:
             if estado == "alta":
                 cargar(
@@ -82,7 +80,7 @@ def off_btn():
 
 
 def gg(br, tree):
-    # datos=tree.item(br).get("text")
+    
 
     datos = tree.item(br).get("values")
 
@@ -95,10 +93,10 @@ def gg(br, tree):
     off_btn()
 
 
-# vaciar()
+
 
 def apago_campos():
-    # entrada1 = tk.Entry(state=tk.DISABLED)
+    
     entrada1.config(state="disabled")
     entrada2.config(state="disabled")
     entrada3.config(state="disabled")
@@ -106,22 +104,13 @@ def apago_campos():
     entrada5.config(state="disabled")
 
 def prendo_campos():
-    # entrada1 = tk.Entry(state=tk.DISABLED)
+    
     entrada1.config(state="normal")
     entrada2.config(state="normal")
     entrada3.config(state="normal")
     entrada4.config(state="normal")
     entrada5.config(state="normal")
 
-def prendo_aceptar():  ## para borrar
-    boton_salir = Button(
-        root,
-        text="Cancelar",
-        command=lambda: salir(),
-        borderwidth=5,
-        cursor="hand1",
-        state=tk.DISABLED,
-    )
 
 
 def vaciar():
@@ -207,7 +196,7 @@ def actualizar_treeview(mitreview):
     datos = cursor.execute(sql)
     resultado = datos.fetchall()
     for fila in resultado:
-        # print(fila)
+        
         mitreview.insert(
             "",
             0,
@@ -236,10 +225,6 @@ def pres_modif():
         tree.focus(),
         tree,
     )
-
-
-# voy a aplicar ####################################################################################################################
-
 
 def consultar(titulo, autor, retiro, cliente, dev, tree):
     selection = intro1.get()
@@ -292,20 +277,11 @@ def borrar(br, tree):
 
 def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
     global estado
-    # gg(br, tree)
-    #############
-    # datos = tree.item(br).get("values")
-    # intro1.set(datos[0]),
-    # intro2.set(datos[1]),
-    # intro3.set(datos[2]),
-    # intro4.set(datos[3]),
-    # intro5.set(datos[4]),
-    #############
-    # estado = "modificar"
+ 
     con = conectar()
     cursor = con.cursor()
     id_modif = tree.item(br).get("text")  # obtiene el Id para modificar
-    # selection = combo.get()
+    
     tabla = ""
     sql = ""
     # 1) VOY A AVERIGUAR QUE OPCION ELIGIO EL USUARIO
@@ -328,9 +304,7 @@ def modificar(br, titulo, autor, fecharetiro, cliente, fechadev, tree):
         id_modif,
     )  # tupla de datos
 
-    # vaciar()
-
-    # salir()
+ 
 
     cursor.execute(sql, dato)
     con.commit()
@@ -373,13 +347,6 @@ libro.grid(
     column=0,
     sticky=W,
 )
-
-# libro = Label(root, text="Creiterio: ")
-# libro.grid(
-#    row=1,
-#    column=2,
-#    sticky=E,
-# )
 autor = Label(root, text="Autor")
 autor.grid(row=2, column=0, sticky=W)
 
@@ -400,7 +367,7 @@ dev.grid(
 )
 dev.grid
 
-# Defino variables para tomar valores de campos de entrada
+
 intro1, intro2, intro3, intro4, intro5 = (
     StringVar(),
     StringVar(),
@@ -409,7 +376,7 @@ intro1, intro2, intro3, intro4, intro5 = (
     StringVar(value=(date.today() + timedelta(days=14)).strftime("%d/%m/%Y")),
 )
 
-# entrada1 = ttk.Entry(state=tk.DISABLED)
+
 entrada1 = Entry(
     root,
     textvariable=intro1,
@@ -498,20 +465,18 @@ tree.heading("col2", text="Autor")
 tree.heading("col3", text="Retiro")
 tree.heading("col4", text="Cliente")
 tree.heading("col5", text="Devolucion")
-# tree.bind("<<TreeviewSelect>>", seleccion())
 
-# apago_campos()
 boton_alta = Button(
     root,
     text="Alta",
     command=lambda: pres_alta(),
     borderwidth=5,
     cursor="hand1",
-    # takefocus=False
+    
     )
 
 boton_alta.grid(
-    # row=8,
+    
     row=19,
     column=0,
     sticky=W + E,
@@ -521,16 +486,6 @@ boton_consulta = Button(
     root,
     text="Buscar",
     command=lambda: pres_consulta(),
-    # validar(),
-    # """
-    # command=lambda: consultar(
-    #     intro1.get(),
-    #     intro2.get(),
-    #     intro3.get(),
-    #     intro4.get(),
-    #     intro5.get(),
-    #     tree,
-    # ),"""
     borderwidth=5,
     cursor="hand1",
 )
@@ -544,7 +499,7 @@ boton_modif = Button(
     root,
     text="Modificar",
     command=lambda: pres_modif(),
-    # off_btn(),
+    
     borderwidth=5,
     cursor="hand1",
 )
@@ -589,19 +544,9 @@ boton_aceptar = Button(
     root,
     text="Aplicar cambios",
     command=lambda: validar(),
-    # """command=lambda: modificar(
-    #    tree.focus(),
-    #    intro1.get(),
-    #    intro2.get(),
-    #    intro3.get(),
-    #    intro4.get(),
-    #    intro5.get(),
-    #    tree,
-    #    off_btn(),
-    # ),"""
     borderwidth=5,
     cursor="hand1",
-    # state=flag,
+   
 )
 boton_aceptar.grid(
     row=19,
@@ -622,13 +567,7 @@ boton_cancelar.grid(
     sticky=E + W,
 )
 
-"""
-# combo = ttk.Combobox(
-#  state="readonly",
-#  values=["Titulo", "Autor", "Retiro", "Cliente", "Devolucion"],
-# )
-# combo.place(x=550, y=40)b
-"""
+
 # Defino colores de los botones
 boton_alta.configure(background="#7A7F6F", foreground="#000000")
 boton_consulta.configure(background="#7A7F6F", foreground="#000000")
@@ -638,27 +577,5 @@ boton_salir.configure(background="#7A7F6F", foreground="#000000")
 boton_aceptar.configure(background="#7A7F6F", foreground="#000000")
 boton_cancelar.configure(background="#7A7F6F", foreground="#000000")
 
-def seleccionar(mv, parametros):
-    try:
-        item = mv.selection()[0]
-    except IndexError:
-        messagebox.showwarning(
-            message="Debe seleccionar un elemento.", title="No hay selección"
-        )
-    else:
-        text = mv.item(item, option="text")
-        messagebox.showinfo(message=text, title="Selección")
-
-        data = mv.item(item)
-
-
-"""
-# tree.bind("<<TreeviewSelect>>", gg())
-if flag == "on":
-    boton_cancelar(state=tk.NORMAL),
-    boton_aceptar(state=tk.NORMAL),
-else:
-    boton_cancelar(state=tk.DISABLED),
-    boton_aceptar(state=tk.DISABLED),"""
 on_btn()
 root.mainloop()
