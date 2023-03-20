@@ -18,6 +18,11 @@ estado = ""
 
 # enconding: utf-8
 
+def cancelar():
+    on_btn()
+    vaciar()
+    apago_campos()
+
 def pres_alta():
     # venimos del boton antes de ejecutaralta
     global estado
@@ -557,7 +562,7 @@ boton_aceptar.grid(
 boton_cancelar = Button(
     root,
     text="Cancelar",
-    command=lambda: salir(),
+    command=lambda: cancelar(),
     borderwidth=5,
     cursor="hand1",
 )
